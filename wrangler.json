@@ -1,0 +1,10 @@
+{
+    "name": "hytools-api",
+    "main": "src/worker.py",
+    "compatibility_flags": [
+      "python_workers"
+    ],
+    "compatibility_date": "2025-01-10",
+    "vars": {
+    }
+  }
