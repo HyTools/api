@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import enum
 from pydantic import field_validator
 from typing import Optional
 from uuid import UUID, uuid4
-from __future__ import annotations
 
 from sqlmodel import SQLModel, Column, Enum, Field, Relationship, String, Integer
 
@@ -53,6 +54,29 @@ class Permissions(enum.IntFlag):
         if not self.value:
             return "No permissions"
         return " | ".join([perm.name for perm in type(self) if self & perm])
+    
+class Benefits(enum.IntFlag):
+    SOMETHING = 1 << 0
+
+    def add(self, benefit: "Benefits") -> "Benefits":
+        return self | benefit
+
+    def remove(self, benefit: "Benefits") -> "Benefits":
+        return self & ~benefit
+
+    def has(self, benefit: "Benefits") -> bool:
+        return (self & benefit) == benefit
+    
+    def has_any(self, *benefits: "Benefits") -> bool:
+        return any(self.has(b) for b in benefits)
+    
+    def has_all(self, *benefits: "Benefits") -> bool:
+        return all(self.has(b) for b in benefits)
+
+    def __str__(self):
+        if not self.value:
+            return "No benefits"
+        return " | ".join([b.name for b in type(self) if self & b])
 
 class Premium(SQLModel, table=True):
     __tablename__="app_premium"
